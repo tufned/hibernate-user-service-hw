@@ -1,0 +1,33 @@
+package mate.academy.service.impl;
+
+import java.util.Optional;
+import mate.academy.dao.UserDao;
+import mate.academy.exception.DataProcessingException;
+import mate.academy.lib.Inject;
+import mate.academy.lib.Service;
+import mate.academy.model.User;
+import mate.academy.service.UserService;
+import mate.academy.util.HashUtil;
+
+@Service
+public class UserServiceImpl implements UserService {
+    @Inject
+    private UserDao userDao;
+
+    @Override
+    public User add(User user) {
+        user.setSalt(HashUtil.getSalt());
+        String hashedPassword = HashUtil.getHash(user.getPassword(), user.getSalt());
+        user.setPassword(hashedPassword);
+        return userDao.add(user);
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        try {
+            return userDao.findByEmail(email);
+        } catch (Exception e) {
+            throw new DataProcessingException("Can't find user with email: " + email, e);
+        }
+    }
+}
