@@ -24,10 +24,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<User> findByEmail(String email) {
-        try {
-            return userDao.findByEmail(email);
-        } catch (Exception e) {
-            throw new DataProcessingException("Can't find user with email: " + email, e);
-        }
+        return userDao.findByEmail(email);
     }
 }
